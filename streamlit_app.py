@@ -25,48 +25,130 @@ st.set_page_config(
 # Custom CSS
 st.markdown("""
 <style>
+    /* General styling */
     .main {
         padding: 2rem;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
     }
-    .chat-message {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: flex-start;
+
+    /* Header styling */
+    h1, h2, h3, h4 {
+        font-family: 'Georgia', serif;
+        color: #2C3E50;
     }
-    .chat-message.user {
-        background-color: #f0f2f6;
+
+    /* Chat styling */
+    .stChatMessage {
+        border-radius: 15px !important;
+        padding: 10px !important;
+        transition: all 0.3s ease;
     }
-    .chat-message.bot {
-        background-color: #e6f7ff;
+
+    .stChatMessage:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .chat-message .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 1rem;
+
+    .stChatMessage[data-testid="user-message"] {
+        background-color: #E8F4F8 !important;
+        border-left: 4px solid #3498DB !important;
     }
-    .chat-message .message {
-        flex: 1;
+
+    .stChatMessage[data-testid="assistant-message"] {
+        background-color: #F0F7F4 !important;
+        border-left: 4px solid #2ECC71 !important;
     }
+
+    /* Menu item styling */
     .menu-item {
         border: 1px solid #ddd;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 1rem;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+        background-color: #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
     }
+
+    .menu-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
     .menu-item h4 {
         margin-top: 0;
+        color: #2C3E50;
+        font-size: 1.2rem;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 8px;
     }
+
     .menu-item .price {
         font-weight: bold;
-        color: #4CAF50;
+        color: #27AE60;
+        font-size: 1.1rem;
     }
+
+    .menu-item .description {
+        color: #555;
+        margin: 8px 0;
+    }
+
     .menu-item .dietary {
         font-style: italic;
-        color: #666;
+        color: #7D3C98;
+        font-size: 0.9rem;
+        margin-top: 8px;
+    }
+
+    .menu-item .id {
+        color: #999;
+        font-size: 0.8rem;
+        margin-top: 8px;
+    }
+
+    /* Button styling */
+    .stButton > button {
+        border-radius: 20px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .stButton > button:hover {
+        transform: scale(1.05);
+    }
+
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: #F8F9FA;
+    }
+
+    /* Form styling */
+    .stForm {
+        background-color: #FFFFFF;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Input fields */
+    .stTextInput > div > div > input {
+        border-radius: 5px;
+    }
+
+    /* Checkbox styling */
+    .stCheckbox > label > div[role="checkbox"] {
+        border-radius: 5px;
+    }
+
+    /* Radio button styling */
+    .stRadio > div {
+        padding: 10px;
+    }
+
+    /* Success/Error messages */
+    .stSuccess, .stError {
+        border-radius: 10px;
+        padding: 10px 15px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -98,13 +180,26 @@ if 'reservation_process' not in st.session_state:
         "data": {}
     }
 
+# Page navigation state
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "Chat"
+
 # Sidebar with options
 with st.sidebar:
-    st.title("Restaurant Chatbot")
-    st.markdown("---")
+    # Restaurant logo and title
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #2C3E50; font-family: 'Georgia', serif;">
+            <span style="color: #E74C3C;">🍽️</span> Gourmet Delight
+        </h1>
+        <p style="font-style: italic; color: #7F8C8D;">Fine Dining Experience</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div style="height: 2px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px 0 20px 0;"></div>', unsafe_allow_html=True)
 
     # Navigation
-    page = st.radio("Navigation", ["Chat", "Menu", "Make Reservation"])
+    st.session_state.current_page = st.radio("Navigation", ["Chat", "Menu", "Make Reservation"], index=["Chat", "Menu", "Make Reservation"].index(st.session_state.current_page))
 
     # Quick action buttons
     st.markdown("---")
@@ -112,22 +207,30 @@ with st.sidebar:
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("View Menu"):
-            st.session_state.page = "Menu"
+        if st.button("View Menu", key="view_menu_btn", use_container_width=True):
+            st.session_state.current_page = "Menu"
             st.rerun()
     with col2:
-        if st.button("Make Reservation"):
-            st.session_state.page = "Make Reservation"
+        if st.button("Make Reservation", key="make_res_btn", use_container_width=True):
+            st.session_state.current_page = "Make Reservation"
             st.rerun()
 
-    st.markdown("---")
-    st.markdown("### Quick Commands")
-    st.markdown("- Type 'menu' to see the full menu")
-    st.markdown("- Type 'vegetarian', 'vegan', or 'gluten-free' to see dietary options")
-    st.markdown("- Type 'appetizers', 'main courses', or 'desserts' to see specific categories")
-    st.markdown("- Type 'search [query]' to search for dishes")
-    st.markdown("- Type 'reserve' to make a reservation")
-    st.markdown("- Type 'help' for assistance")
+    st.markdown('<div style="height: 2px; background: linear-gradient(to right, #3498DB, #E74C3C); margin: 20px 0;"></div>', unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="background-color: #F8F9F9; padding: 15px; border-radius: 10px; border-left: 4px solid #3498DB;">
+        <h3 style="color: #2C3E50; margin-top: 0;">Quick Commands</h3>
+        <ul style="padding-left: 20px; margin-bottom: 0;">
+            <li><code>menu</code> - View the full menu</li>
+            <li><code>vegetarian</code>, <code>vegan</code>, <code>gluten-free</code> - View dietary options</li>
+            <li><code>appetizers</code>, <code>main courses</code>, <code>desserts</code> - View categories</li>
+            <li><code>search [query]</code> - Search for dishes</li>
+            <li><code>reserve</code> - Make a reservation</li>
+            <li><code>add dishes</code> - Add dishes to a reservation</li>
+            <li><code>help</code> - Show all commands</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Helper functions
 def format_menu_items(items, title):
@@ -152,7 +255,14 @@ def display_menu_items_cards(items, title):
         st.info(f"No {title.lower()} found.")
         return
 
-    st.subheader(title)
+    # Enhanced category header
+    st.markdown(f"""
+    <div style="margin: 30px 0 15px 0;">
+        <h2 style="color: #2C3E50; font-family: 'Georgia', serif; display: inline-block; border-bottom: 2px solid #E74C3C; padding-bottom: 5px;">
+            {title}
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Create columns for the menu items (3 items per row)
     cols = st.columns(3)
@@ -164,9 +274,9 @@ def display_menu_items_cards(items, title):
                 <div class="menu-item">
                     <h4>{item['name']}</h4>
                     <p class="price">${item['price']:.2f}</p>
-                    <p>{item['description']}</p>
+                    <p class="description">{item['description']}</p>
                     {f'<p class="dietary">Dietary: {", ".join(item["dietary_info"])}</p>' if item.get('dietary_info') else ''}
-                    <p><small>Item ID: {item['id']}</small></p>
+                    <p class="id">Item ID: {item['id']}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -350,7 +460,7 @@ Party Size: {party_size}
 Your reservation ID is {reservation['id']}.
 Would you like to add any dishes to your reservation? Type 'add dishes' to select dishes."""
 
-        except Exception as e:
+        except Exception:
             return f"""I couldn't process your reservation information. Please make sure it's in the correct format:
 "Name: John Doe, Contact: john@example.com, Date: 2023-07-15, Time: 19:00, Party: 4"
 
@@ -435,14 +545,33 @@ Would you like to add any dishes to your reservation? Type 'add dishes' to selec
 def display_full_menu():
     """Display the full menu."""
     menu = menu_service.get_full_menu()
-    st.header(f"Today's Menu ({menu.get('date', 'Today')})")
+
+    # Enhanced header with styling
+    st.markdown(f"""
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #2C3E50; font-family: 'Georgia', serif;">Today's Menu</h1>
+        <p style="color: #7F8C8D; font-style: italic; font-size: 1.2rem;">
+            {menu.get('date', 'Today')}
+        </p>
+        <div style="height: 3px; width: 100px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px auto;"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
     for category in menu.get('categories', []):
         display_menu_items_cards(category.get('items', []), category['name'])
 
 def display_chat():
     """Display the chat interface."""
-    st.header("Chat with our Restaurant Assistant")
+    # Enhanced header with styling
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #2C3E50; font-family: 'Georgia', serif;">Chat with our Assistant</h1>
+        <p style="color: #7F8C8D; font-style: italic; font-size: 1.2rem;">
+            Ask about our menu, make reservations, or get recommendations
+        </p>
+        <div style="height: 3px; width: 100px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px auto;"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Display chat messages
     for message in st.session_state.messages:
@@ -458,15 +587,17 @@ def display_chat():
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Process the message
-        response, action = process_message(prompt)
-
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
-
-        # Display assistant response
+        # Show a loading animation while processing
         with st.chat_message("assistant"):
-            st.markdown(response)
+            with st.spinner("Thinking..."):
+                # Process the message
+                response, action = process_message(prompt)
+
+                # Add assistant response to chat history
+                st.session_state.messages.append({"role": "assistant", "content": response})
+
+                # Display assistant response
+                st.markdown(response)
 
         # Handle special actions
         if action == "add_dishes":
@@ -481,7 +612,7 @@ def display_chat():
                         # Store the reservation ID in session state
                         st.session_state.current_reservation_id = reservation_id
                         # Switch to the Make Reservation page
-                        st.session_state.page = "Make Reservation"
+                        st.session_state.current_page = "Make Reservation"
                         st.rerun()
                     else:
                         # Add error message to chat
@@ -491,7 +622,7 @@ def display_chat():
                         })
                         with st.chat_message("assistant"):
                             st.markdown(f"I couldn't find a reservation with ID: {reservation_id}. Please check the ID and try again.")
-                except Exception as e:
+                except Exception:
                     # Add error message to chat
                     st.session_state.messages.append({
                         "role": "assistant",
@@ -502,90 +633,151 @@ def display_chat():
 
 def display_reservation_form():
     """Display the reservation form."""
-    st.header("Make a Reservation")
+    # Enhanced header with styling
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #2C3E50; font-family: 'Georgia', serif;">Make a Reservation</h1>
+        <p style="color: #7F8C8D; font-style: italic; font-size: 1.2rem;">
+            Reserve your table and pre-order your favorite dishes
+        </p>
+        <div style="height: 3px; width: 100px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px auto;"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with st.form("reservation_form"):
-        col1, col2 = st.columns(2)
+    # Form with enhanced styling
+    with st.container():
+        st.markdown("""
+        <div style="background-color: #F8F9F9; padding: 20px; border-radius: 10px; border: 1px solid #E5E7E9; margin-bottom: 20px;">
+            <h3 style="color: #2C3E50; margin-top: 0;">Reservation Details</h3>
+            <p style="color: #7F8C8D;">Please fill in your details below to make a reservation.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-        with col1:
-            customer_name = st.text_input("Name", value=st.session_state.reservation_data["customer_name"])
-            contact_info = st.text_input("Contact Information (Phone/Email)", value=st.session_state.reservation_data["contact_info"])
-            date = st.date_input("Date", value=datetime.strptime(st.session_state.reservation_data["date"], "%Y-%m-%d") if st.session_state.reservation_data["date"] else datetime.now())
+        with st.form("reservation_form"):
+            col1, col2 = st.columns(2)
 
-        with col2:
-            time = st.time_input("Time", value=datetime.strptime(st.session_state.reservation_data["time"], "%H:%M").time() if st.session_state.reservation_data["time"] else datetime.strptime("19:00", "%H:%M").time())
-            party_size = st.number_input("Party Size", min_value=1, max_value=20, value=st.session_state.reservation_data["party_size"])
+            with col1:
+                customer_name = st.text_input("Name", value=st.session_state.reservation_data["customer_name"])
+                contact_info = st.text_input("Contact Information (Phone/Email)", value=st.session_state.reservation_data["contact_info"])
+                date = st.date_input("Date", value=datetime.strptime(st.session_state.reservation_data["date"], "%Y-%m-%d") if st.session_state.reservation_data["date"] else datetime.now())
 
-        # Display available menu items for selection
-        st.subheader("Select Dishes (Optional)")
-        available_items = menu_service.get_available_items()
+            with col2:
+                time = st.time_input("Time", value=datetime.strptime(st.session_state.reservation_data["time"], "%H:%M").time() if st.session_state.reservation_data["time"] else datetime.strptime("19:00", "%H:%M").time())
+                party_size = st.number_input("Party Size", min_value=1, max_value=20, value=st.session_state.reservation_data["party_size"])
 
-        # Group items by category
-        items_by_category = {}
-        for item in available_items:
-            category = item.get("category", "Other")
-            if category not in items_by_category:
-                items_by_category[category] = []
-            items_by_category[category].append(item)
+            # Divider
+            st.markdown('<div style="height: 2px; background: linear-gradient(to right, #E5E7E9, #F8F9F9, #E5E7E9); margin: 20px 0;"></div>', unsafe_allow_html=True)
 
-        # Display items by category with checkboxes
-        selected_dishes = []
-        for category, items in items_by_category.items():
-            st.markdown(f"**{category}**")
-            cols = st.columns(3)
-            for i, item in enumerate(items):
-                with cols[i % 3]:
-                    if st.checkbox(f"{item['name']} (${item['price']:.2f})", value=item['id'] in st.session_state.reservation_data["dish_ids"]):
-                        selected_dishes.append(item['id'])
+            # Display available menu items for selection
+            st.markdown("""
+            <h3 style="color: #2C3E50; margin-top: 0;">Select Dishes (Optional)</h3>
+            <p style="color: #7F8C8D; font-size: 0.9rem;">Check the dishes you'd like to pre-order with your reservation.</p>
+            """, unsafe_allow_html=True)
 
-        # Submit button
-        submitted = st.form_submit_button("Make Reservation")
+            available_items = menu_service.get_available_items()
 
-        if submitted:
-            # Update reservation data
-            st.session_state.reservation_data = {
-                "customer_name": customer_name,
-                "contact_info": contact_info,
-                "date": date.strftime("%Y-%m-%d"),
-                "time": time.strftime("%H:%M"),
-                "party_size": party_size,
-                "dish_ids": selected_dishes
-            }
+            # Group items by category
+            items_by_category = {}
+            for item in available_items:
+                category = item.get("category", "Other")
+                if category not in items_by_category:
+                    items_by_category[category] = []
+                items_by_category[category].append(item)
 
-            # Validate form
-            if not customer_name or not contact_info:
-                st.error("Please provide your name and contact information.")
-            else:
-                # Create reservation
-                reservation = reservation_service.create_reservation(
-                    customer_name=customer_name,
-                    contact_info=contact_info,
-                    date=date.strftime("%Y-%m-%d"),
-                    time=time.strftime("%H:%M"),
-                    party_size=party_size,
-                    dish_ids=selected_dishes
-                )
+            # Display items by category with checkboxes
+            selected_dishes = []
+            for category, items in items_by_category.items():
+                st.markdown(f"<p style='font-weight: bold; color: #2C3E50; margin-bottom: 5px;'>{category}</p>", unsafe_allow_html=True)
+                cols = st.columns(3)
+                for i, item in enumerate(items):
+                    with cols[i % 3]:
+                        if st.checkbox(f"{item['name']} (${item['price']:.2f})", value=item['id'] in st.session_state.reservation_data["dish_ids"]):
+                            selected_dishes.append(item['id'])
 
-                # Show success message
-                st.success(f"Reservation confirmed! Your reservation ID is {reservation['id']}.")
+            # Divider
+            st.markdown('<div style="height: 2px; background: linear-gradient(to right, #E5E7E9, #F8F9F9, #E5E7E9); margin: 20px 0;"></div>', unsafe_allow_html=True)
 
-                # Add message to chat history
-                dishes_text = ""
-                if selected_dishes:
-                    dish_names = []
-                    for dish_id in selected_dishes:
-                        dish = menu_service.get_item_by_id(dish_id)
-                        if dish:
-                            dish_names.append(dish['name'])
-                    dishes_text = f" with the following dishes: {', '.join(dish_names)}"
+            # Submit button with styling
+            _, center_col, _ = st.columns([1, 2, 1])
+            with center_col:
+                submitted = st.form_submit_button("Make Reservation")
 
-                reservation_message = f"Your reservation has been confirmed for {party_size} people on {date.strftime('%Y-%m-%d')} at {time.strftime('%H:%M')}{dishes_text}. Your reservation ID is {reservation['id']}."
-                st.session_state.messages.append({"role": "assistant", "content": reservation_message})
+            if submitted:
+                # Update reservation data
+                st.session_state.reservation_data = {
+                    "customer_name": customer_name,
+                    "contact_info": contact_info,
+                    "date": date.strftime("%Y-%m-%d"),
+                    "time": time.strftime("%H:%M"),
+                    "party_size": party_size,
+                    "dish_ids": selected_dishes
+                }
+
+                # Validate form
+                if not customer_name or not contact_info:
+                    st.error("Please provide your name and contact information.")
+                else:
+                    # Create reservation
+                    reservation = reservation_service.create_reservation(
+                        customer_name=customer_name,
+                        contact_info=contact_info,
+                        date=date.strftime("%Y-%m-%d"),
+                        time=time.strftime("%H:%M"),
+                        party_size=party_size,
+                        dish_ids=selected_dishes
+                    )
+
+                    # Show success message with styling
+                    st.success(f"Reservation confirmed! Your reservation ID is {reservation['id']}.")
+
+                    # Display confirmation details
+                    st.markdown(f"""
+                    <div style="background-color: #EBF5FB; padding: 15px; border-radius: 10px; border-left: 4px solid #3498DB; margin-top: 20px;">
+                        <h3 style="color: #2C3E50; margin-top: 0;">Reservation Details</h3>
+                        <p><strong>Name:</strong> {customer_name}</p>
+                        <p><strong>Contact:</strong> {contact_info}</p>
+                        <p><strong>Date:</strong> {date.strftime('%Y-%m-%d')}</p>
+                        <p><strong>Time:</strong> {time.strftime('%H:%M')}</p>
+                        <p><strong>Party Size:</strong> {party_size}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    # Add message to chat history
+                    dishes_text = ""
+                    if selected_dishes:
+                        dish_names = []
+                        for dish_id in selected_dishes:
+                            dish = menu_service.get_item_by_id(dish_id)
+                            if dish:
+                                dish_names.append(dish['name'])
+                        dishes_text = f" with the following dishes: {', '.join(dish_names)}"
+
+                        # Display selected dishes
+                        st.markdown(f"""
+                        <div style="background-color: #F9EBEA; padding: 15px; border-radius: 10px; border-left: 4px solid #E74C3C; margin-top: 20px;">
+                            <h3 style="color: #2C3E50; margin-top: 0;">Selected Dishes</h3>
+                            <ul style="padding-left: 20px; margin-bottom: 0;">
+                                {"".join([f"<li>{dish_name}</li>" for dish_name in dish_names])}
+                            </ul>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    reservation_message = f"Your reservation has been confirmed for {party_size} people on {date.strftime('%Y-%m-%d')} at {time.strftime('%H:%M')}{dishes_text}. Your reservation ID is {reservation['id']}."
+                    st.session_state.messages.append({"role": "assistant", "content": reservation_message})
 
 # Main content based on selected page
-if page == "Chat":
+if st.session_state.current_page == "Chat":
     display_chat()
-elif page == "Menu":
+elif st.session_state.current_page == "Menu":
     display_full_menu()
-elif page == "Make Reservation":
+elif st.session_state.current_page == "Make Reservation":
     display_reservation_form()
+
+# Footer
+st.markdown("""
+<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #F8F9FA; padding: 10px; text-align: center; border-top: 1px solid #E5E7E9;">
+    <p style="color: #7F8C8D; font-size: 0.8rem; margin: 0;">
+        © 2023 Gourmet Delight Restaurant | Powered by Streamlit and OpenAI
+    </p>
+</div>
+""", unsafe_allow_html=True)
