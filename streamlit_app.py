@@ -232,6 +232,46 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    # Add About/Info section with expander
+    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
+
+    with st.expander("ℹ️ About This App"):
+        st.markdown("""
+        <div style="padding: 10px;">
+            <h3 style="color: #2C3E50;">Restaurant Chatbot</h3>
+            <p>This interactive restaurant chatbot helps you explore our menu and make reservations with ease.</p>
+
+            <h4 style="color: #2C3E50; margin-top: 15px;">Technology Stack</h4>
+            <ul>
+                <li><strong>Frontend:</strong> Streamlit</li>
+                <li><strong>AI Model:</strong> OpenAI GPT-4o</li>
+                <li><strong>Framework:</strong> LangChain</li>
+                <li><strong>Containerization:</strong> Docker</li>
+            </ul>
+
+            <h4 style="color: #2C3E50; margin-top: 15px;">Features</h4>
+            <ul>
+                <li>Browse the complete menu</li>
+                <li>Search for specific dishes</li>
+                <li>Filter by dietary preferences</li>
+                <li>Make table reservations</li>
+                <li>Pre-order dishes with your reservation</li>
+            </ul>
+
+            <h4 style="color: #2C3E50; margin-top: 15px;">How to Use</h4>
+            <ol>
+                <li><strong>Chat Interface:</strong> Type commands or questions in natural language</li>
+                <li><strong>Menu Browsing:</strong> Use the "Menu" tab or type "menu" in chat</li>
+                <li><strong>Making Reservations:</strong> Use the "Make Reservation" tab or type "reserve" in chat</li>
+                <li><strong>Search:</strong> Type "search [dish name]" to find specific dishes</li>
+            </ol>
+
+            <div style="background-color: #EBF5FB; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                <p style="margin: 0;"><strong>Tip:</strong> For the best experience, try asking questions in natural language like "Do you have any vegetarian options?" or "I'd like to make a reservation for 4 people tomorrow at 7 PM."</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
 # Helper functions
 def format_menu_items(items, title):
     """Format menu items for display."""
@@ -557,6 +597,15 @@ def display_full_menu():
     </div>
     """, unsafe_allow_html=True)
 
+    # Info banner
+    st.info("""
+    🍽️ **Menu Information:**
+    - Browse our menu by category
+    - Click on the "Make Reservation" tab to reserve a table and pre-order dishes
+    - Special dietary options are marked in each dish description
+    """)
+
+
     for category in menu.get('categories', []):
         display_menu_items_cards(category.get('items', []), category['name'])
 
@@ -572,6 +621,40 @@ def display_chat():
         <div style="height: 3px; width: 100px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px auto;"></div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Info banner
+    st.info("""
+    💬 **How to use the chat:**
+    - Type "menu" to see our full menu
+    - Ask about dietary options like "vegetarian" or "gluten-free"
+    - Type "reserve" to make a reservation
+    - For more commands, type "help"
+    """)
+
+
+    # Help button
+    _, center_col, _ = st.columns([1, 1, 1])
+    with center_col:
+        if st.button("🆘 Need Help?", key="help_button", use_container_width=True):
+            # Add help message to chat history
+            help_message = """
+Here are the commands you can use:
+- 'menu' - View the full menu
+- 'vegetarian', 'vegan', 'gluten-free' - View dietary options
+- 'appetizers', 'main courses', 'desserts' - View specific categories
+- 'search [query]' - Search for dishes (e.g., 'search salmon')
+- 'reserve' - Make a reservation directly in the chat
+- 'add dishes' - Add dishes to an existing reservation
+- 'cancel' - Cancel the current reservation process
+- 'help' - Show all commands
+
+When making a reservation, you can provide all information at once like this:
+"Name: John Doe, Contact: john@example.com, Date: 2023-07-15, Time: 19:00, Party: 4"
+
+Or follow the step-by-step process when prompted.
+            """
+            st.session_state.messages.append({"role": "assistant", "content": help_message})
+            st.rerun()
 
     # Display chat messages
     for message in st.session_state.messages:
@@ -643,6 +726,16 @@ def display_reservation_form():
         <div style="height: 3px; width: 100px; background: linear-gradient(to right, #E74C3C, #3498DB); margin: 10px auto;"></div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Info banner
+    st.info("""
+    📅 **Reservation Information:**
+    - Fill in your details to reserve a table
+    - Optionally select dishes to pre-order
+    - You'll receive a confirmation with your reservation ID
+    - You can add more dishes later by using the "add dishes" command in chat
+    """)
+
 
     # Form with enhanced styling
     with st.container():
@@ -773,11 +866,13 @@ elif st.session_state.current_page == "Menu":
 elif st.session_state.current_page == "Make Reservation":
     display_reservation_form()
 
-# Footer
+# Footer with version info
 st.markdown("""
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #F8F9FA; padding: 10px; text-align: center; border-top: 1px solid #E5E7E9;">
     <p style="color: #7F8C8D; font-size: 0.8rem; margin: 0;">
-        © 2023 Gourmet Delight Restaurant | Powered by Streamlit and OpenAI
+        © 2023 Gourmet Delight Restaurant | Powered by Streamlit and OpenAI |
+        <span title="Built with Python, Streamlit, OpenAI GPT-4o, LangChain, and Docker">v1.0.0</span>
+        <a href="#" onclick="document.querySelector('.stExpander').click(); return false;" style="color: #3498DB; text-decoration: none; margin-left: 5px;" title="View app info">ℹ️</a>
     </p>
 </div>
 """, unsafe_allow_html=True)
