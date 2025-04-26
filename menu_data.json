@@ -1,0 +1,100 @@
+{
+  "date": "2023-07-10",
+  "categories": [
+    {
+      "name": "Appetizers",
+      "items": [
+        {
+          "id": "app1",
+          "name": "Bruschetta",
+          "description": "Toasted bread topped with fresh tomatoes, basil, and garlic",
+          "price": 8.99,
+          "available": true,
+          "dietary_info": ["vegetarian"]
+        },
+        {
+          "id": "app2",
+          "name": "Calamari",
+          "description": "Crispy fried squid served with marinara sauce",
+          "price": 12.99,
+          "available": true,
+          "dietary_info": []
+        },
+        {
+          "id": "app3",
+          "name": "Spinach Artichoke Dip",
+          "description": "Creamy dip with spinach, artichokes, and melted cheese, served with tortilla chips",
+          "price": 10.99,
+          "available": true,
+          "dietary_info": ["vegetarian", "contains_dairy"]
+        }
+      ]
+    },
+    {
+      "name": "Main Courses",
+      "items": [
+        {
+          "id": "main1",
+          "name": "Grilled Salmon",
+          "description": "Fresh salmon fillet grilled to perfection, served with seasonal vegetables and rice",
+          "price": 24.99,
+          "available": true,
+          "dietary_info": ["gluten-free"]
+        },
+        {
+          "id": "main2",
+          "name": "Filet Mignon",
+          "description": "8oz premium beef tenderloin, served with mashed potatoes and asparagus",
+          "price": 34.99,
+          "available": true,
+          "dietary_info": ["gluten-free"]
+        },
+        {
+          "id": "main3",
+          "name": "Vegetable Pasta",
+          "description": "Penne pasta with seasonal vegetables in a light cream sauce",
+          "price": 18.99,
+          "available": true,
+          "dietary_info": ["vegetarian", "contains_dairy"]
+        },
+        {
+          "id": "main4",
+          "name": "Chicken Parmesan",
+          "description": "Breaded chicken breast topped with marinara sauce and mozzarella, served with spaghetti",
+          "price": 22.99,
+          "available": true,
+          "dietary_info": ["contains_dairy"]
+        }
+      ]
+    },
+    {
+      "name": "Desserts",
+      "items": [
+        {
+          "id": "des1",
+          "name": "Tiramisu",
+          "description": "Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cream",
+          "price": 9.99,
+          "available": true,
+          "dietary_info": ["vegetarian", "contains_dairy"]
+        },
+        {
+          "id": "des2",
+          "name": "Chocolate Lava Cake",
+          "description": "Warm chocolate cake with a molten center, served with vanilla ice cream",
+          "price": 8.99,
+          "available": true,
+          "dietary_info": ["vegetarian", "contains_dairy"]
+        },
+        {
+          "id": "des3",
+          "name": "Fruit Sorbet",
+          "description": "Refreshing fruit sorbet, ask server for today's flavors",
+          "price": 6.99,
+          "available": true,
+          "dietary_info": ["vegan", "gluten-free"]
+        }
+      ]
+    }
+  ]
+}
