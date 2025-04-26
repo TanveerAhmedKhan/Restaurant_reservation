@@ -236,39 +236,44 @@ with st.sidebar:
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
     with st.expander("ℹ️ About This App"):
+        # Use separate markdown blocks for better rendering
+        st.markdown("<h3 style='color: #2C3E50;'>Restaurant Chatbot</h3>", unsafe_allow_html=True)
+        st.markdown("<p>This interactive restaurant chatbot helps you explore our menu and make reservations with ease.</p>", unsafe_allow_html=True)
+
+        st.markdown("<h4 style='color: #2C3E50; margin-top: 15px;'>Technology Stack</h4>", unsafe_allow_html=True)
         st.markdown("""
-        <div style="padding: 10px;">
-            <h3 style="color: #2C3E50;">Restaurant Chatbot</h3>
-            <p>This interactive restaurant chatbot helps you explore our menu and make reservations with ease.</p>
+        <ul>
+            <li><strong>Frontend:</strong> Streamlit</li>
+            <li><strong>AI Model:</strong> OpenAI GPT-4o</li>
+            <li><strong>Framework:</strong> LangChain</li>
+            <li><strong>Containerization:</strong> Docker</li>
+        </ul>
+        """, unsafe_allow_html=True)
 
-            <h4 style="color: #2C3E50; margin-top: 15px;">Technology Stack</h4>
-            <ul>
-                <li><strong>Frontend:</strong> Streamlit</li>
-                <li><strong>AI Model:</strong> OpenAI GPT-4o</li>
-                <li><strong>Framework:</strong> LangChain</li>
-                <li><strong>Containerization:</strong> Docker</li>
-            </ul>
+        st.markdown("<h4 style='color: #2C3E50; margin-top: 15px;'>Features</h4>", unsafe_allow_html=True)
+        st.markdown("""
+        <ul>
+            <li>Browse the complete menu</li>
+            <li>Search for specific dishes</li>
+            <li>Filter by dietary preferences</li>
+            <li>Make table reservations</li>
+            <li>Pre-order dishes with your reservation</li>
+        </ul>
+        """, unsafe_allow_html=True)
 
-            <h4 style="color: #2C3E50; margin-top: 15px;">Features</h4>
-            <ul>
-                <li>Browse the complete menu</li>
-                <li>Search for specific dishes</li>
-                <li>Filter by dietary preferences</li>
-                <li>Make table reservations</li>
-                <li>Pre-order dishes with your reservation</li>
-            </ul>
+        st.markdown("<h4 style='color: #2C3E50; margin-top: 15px;'>How to Use</h4>", unsafe_allow_html=True)
+        st.markdown("""
+        <ol>
+            <li><strong>Chat Interface:</strong> Type commands or questions in natural language</li>
+            <li><strong>Menu Browsing:</strong> Use the "Menu" tab or type "menu" in chat</li>
+            <li><strong>Making Reservations:</strong> Use the "Make Reservation" tab or type "reserve" in chat</li>
+            <li><strong>Search:</strong> Type "search [dish name]" to find specific dishes</li>
+        </ol>
+        """, unsafe_allow_html=True)
 
-            <h4 style="color: #2C3E50; margin-top: 15px;">How to Use</h4>
-            <ol>
-                <li><strong>Chat Interface:</strong> Type commands or questions in natural language</li>
-                <li><strong>Menu Browsing:</strong> Use the "Menu" tab or type "menu" in chat</li>
-                <li><strong>Making Reservations:</strong> Use the "Make Reservation" tab or type "reserve" in chat</li>
-                <li><strong>Search:</strong> Type "search [dish name]" to find specific dishes</li>
-            </ol>
-
-            <div style="background-color: #EBF5FB; padding: 10px; border-radius: 5px; margin-top: 15px;">
-                <p style="margin: 0;"><strong>Tip:</strong> For the best experience, try asking questions in natural language like "Do you have any vegetarian options?" or "I'd like to make a reservation for 4 people tomorrow at 7 PM."</p>
-            </div>
+        st.markdown("""
+        <div style="background-color: #EBF5FB; padding: 10px; border-radius: 5px; margin-top: 15px;">
+            <p style="margin: 0;"><strong>Tip:</strong> For the best experience, try asking questions in natural language like "Do you have any vegetarian options?" or "I'd like to make a reservation for 4 people tomorrow at 7 PM."</p>
         </div>
         """, unsafe_allow_html=True)
 
