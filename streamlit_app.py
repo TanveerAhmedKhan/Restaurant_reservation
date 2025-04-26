@@ -98,6 +98,20 @@ with st.sidebar:
     # Navigation
     page = st.radio("Navigation", ["Chat", "Menu", "Make Reservation"])
 
+    # Quick action buttons
+    st.markdown("---")
+    st.markdown("### Quick Actions")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("View Menu"):
+            st.session_state.page = "Menu"
+            st.rerun()
+    with col2:
+        if st.button("Make Reservation"):
+            st.session_state.page = "Make Reservation"
+            st.rerun()
+
     st.markdown("---")
     st.markdown("### Quick Commands")
     st.markdown("- Type 'menu' to see the full menu")
@@ -154,7 +168,21 @@ def process_message(message):
 
     # Menu-related commands
     if message == "menu":
-        return "Here's our full menu:", "menu_full"
+        # Get the full menu and format it for display in the chat
+        full_menu = menu_service.get_full_menu()
+        menu_text = f"**Today's Menu ({full_menu.get('date', 'Today')}):**\n\n"
+
+        for category in full_menu.get('categories', []):
+            menu_text += f"**{category['name']}**\n\n"
+
+            for item in category.get('items', []):
+                menu_text += f"**{item['name']}** - ${item['price']:.2f}  \n"
+                menu_text += f"{item['description']}  \n"
+                if item.get('dietary_info'):
+                    menu_text += f"*Dietary info: {', '.join(item['dietary_info'])}*  \n"
+                menu_text += f"Item ID: {item['id']}  \n\n"
+
+        return menu_text, None
 
     elif message == "vegetarian":
         items = menu_service.get_items_by_dietary_preference("vegetarian")
@@ -246,10 +274,7 @@ def display_chat():
             st.markdown(response)
 
         # Handle special actions
-        if action == "menu_full":
-            st.session_state.page = "Menu"
-            st.rerun()
-        elif action == "reservation":
+        if action == "reservation":
             st.session_state.page = "Make Reservation"
             st.rerun()
 
